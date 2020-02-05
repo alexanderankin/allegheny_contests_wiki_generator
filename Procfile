@@ -1,1 +1,1 @@
-web: heroku-php-apache2 & python web_heroku.py
+web: python web_heroku.py
