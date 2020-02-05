@@ -21,6 +21,8 @@
 
     <p><?php echo 'hello world: ' . (2 + 2) . '.'; ?></p>
 
+    <p>abracadabra</p>
+
     <!-- jQuery -->
     <script src="//code.jquery.com/jquery.js"></script>
     <!-- Bootstrap JavaScript -->
