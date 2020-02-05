@@ -3,6 +3,5 @@
   "buildpacks": [
     { "url": "heroku/python" },
     { "url": "heroku/php" }
-  ],
-  "scripts": { "postdeploy": "sed -i 's/abracadabra/abracadabra no/g' index.php" },
+  ]
 }

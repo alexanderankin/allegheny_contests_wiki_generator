@@ -23,6 +23,10 @@
 
     <p>abracadabra</p>
 
+    <?php
+    $TAF = file_get_contents("changed.txt");
+    echo "<div style='font-size:200%'><p>$TAF</p></div>";
+    ?>
     <!-- jQuery -->
     <script src="//code.jquery.com/jquery.js"></script>
     <!-- Bootstrap JavaScript -->
