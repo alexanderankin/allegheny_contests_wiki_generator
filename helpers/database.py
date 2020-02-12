@@ -1,4 +1,4 @@
-import re
+import os, re
 from six.moves.urllib import parse
 
 import sqlalchemy
@@ -24,8 +24,16 @@ def drop_and_create(prefix=PREFIX, connection_string=CONNECTION_STRING):
             return True
 
         except (sqlalchemy.exc.InternalError, sqlalchemy.exc.OperationalError) as e:
+            if os.environ.get('CLEARDB_DATABASE_URL', None) is not None:
+                print("internal error with heroku")
+                raise e
+
+            # try to decode the missing database
+
+            # get message
             message = getattr(e, 'message', repr(e))
 
+            # match regex
             regex = r"database ['\"]([^'\"']*)['\"]"
             matches = re.search(regex, message, re.MULTILINE)
 
@@ -34,23 +42,33 @@ def drop_and_create(prefix=PREFIX, connection_string=CONNECTION_STRING):
                 missing_database = matches.group(1)
                 print('Database ' + missing_database + ' was not found, creating...')
 
+                # reassuble without database name
                 parsed = parse.urlparse(connection_string)._asdict()
                 applied = dict(parsed, path='/')
                 temp_connection_string = parse.ParseResult(**applied).geturl()
 
+                # make new engine
                 temp_engine = create_engine(temp_connection_string)
                 conn = temp_engine.connect()
 
+                # fix for postgres
                 if temp_connection_string.startswith('postgres'):
                     conn.execute("commit")
 
+                # make missing database and try again
                 conn.execute("create database " + missing_database)
                 continue
 
+            # we dont know what happened, but it wasn't a missing db
             else:
                 print('InternalError or OperationalError which is not a missing database')
-                return False
+                # return False
+
+                # for debugging
+                raise e
 
         except Exception as e:
-            print(getattr(e, 'message', repr(e)))
-            return False
+            # print(getattr(e, 'message', repr(e)))
+            # return False
+            # for debugging
+            raise e

@@ -1,7 +1,7 @@
 import os
 from six.moves.urllib import parse
 
-local = 'postgres://toor:root@localhost/electoral'
+local = 'postgres://toor:root@localhost:3307/electoral'
 CONNECTION_STRING = os.environ.get('CLEARDB_DATABASE_URL', local)
 
 PREFIX = 'electoral_wiki'
@@ -13,4 +13,4 @@ from .prompts import get_sql_flavor
 
 from .database import drop_and_create
 
-# from .wiki_requests import 
+from .wiki_requests import install
