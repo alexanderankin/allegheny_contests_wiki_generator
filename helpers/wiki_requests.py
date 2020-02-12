@@ -31,8 +31,13 @@ def install(base='http://localhostwiki'):
     res = sess.post(b('?page=Install'), data={'submit-continue':'Continue →'})
     res = sess.post(b('?page=Install'), data={'submit-continue':'Continue →'})
 
+    p = os.path
+    root_dir = p.abspath(p.join(p.dirname(__file__), '..'))
+    media_wiki_location = p.join(root_dir, 'mediawiki-1.34.0')
+    local_settings_location = p.join(media_wiki_location, 'LocalSettings.php')
+
     with requests.get(url, stream=True) as r:
-        with open('LocalSettings.php', 'wb') as f:
+        with open(local_settings_location, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192): 
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
@@ -40,7 +45,7 @@ def install(base='http://localhostwiki'):
     print('Saved Settings')
 
     perms = 'wgGroupPermissions'
-    with open('LocalSettings.php', 'a') as f:
+    with open(local_settings_location, 'a') as f:
         f.write('\n')
         f.write("$" + perms + "['*']['createaccount'] = false;\n")
         f.write("$" + perms + "['user']['createaccount'] = true;\n")
